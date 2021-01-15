@@ -1,0 +1,4 @@
+https://www.ebi.ac.uk/ena/xref/rest/json/search?source=EuropePMC&accession=PRJNA308326
+-> url to search xref -> paper related to study
+
+search through biosamples API for race
