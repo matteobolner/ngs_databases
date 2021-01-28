@@ -5,10 +5,17 @@ import sys
 import os
 import json
 import numpy as np
+
+get_stats(9822, '/home/pelmo/db_final/9822_data/')
+get_stats(9984, '/home/pelmo/db_final/9984_data/')
+get_stats(9913, '/home/pelmo/db_final/9913_data/')
+
+
+
 def get_stats(animal_taxon, path_to_folder):
-    animal_taxon = 9984
+    #animal_taxon = 9822
     genome_sizes = {'9822':'2501912388', '9984':'2737490501', '9913':'2715853792'}
-    path_to_folder = '/home/pelmo/db_final/9984_data/'
+    #path_to_folder = '/home/pelmo/db_final/9822_data/'
     path_to_db = os.path.join(path_to_folder, str(animal_taxon)+'_database.csv')
     path_to_db
     df = pd.read_csv(path_to_db)
@@ -19,22 +26,23 @@ def get_stats(animal_taxon, path_to_folder):
     samples_number
     projects_number = len(df['study_accession'].unique().tolist())
     projects_number
-    samples_with_sex = len(df['sex'].dropna())
-    samples_with_sex
-    instrument_platform = len(df['instrument_platform'].dropna())
+    samples_with_sex = len(df[['sample_accession','sex']].drop_duplicates()['sex'].dropna())
+    #df[['sample_accession','sex']].drop_duplicates()['sex'].dropna().value_counts()
+    instrument_platform = len(df[['sample_accession','instrument_platform']].drop_duplicates()['sample_accession'].dropna())
     instrument_platform
-    paired_end_samples = len(df[df['library_layout'] == 'PAIRED'])
+    end_type_samples = (df[['sample_accession','library_layout']].drop_duplicates()['library_layout'].dropna())
+    paired_end_samples = end_type_samples.value_counts()['PAIRED']
     paired_end_samples
-    single_end_samples = len(df[df['library_layout'] == 'SINGLE'])
+    single_end_samples = end_type_samples.value_counts()['SINGLE']
     single_end_samples
     library_strategy = len(df['library_strategy'].dropna())
     library_strategy
-    tissue_biosamples = len(df['tissue_biosamples'].dropna())
+    tissue_biosamples = len(df[['sample_accession','tissue_biosamples']].drop_duplicates()['tissue_biosamples'].dropna())
     tissue_biosamples
-    tissue_ena = len(df[df['tissue_type_ENA']!='NaN'])
-
-    general_stats = {'samples_number': samples_number, 'projects_number':projects_number,'samples_with_sex':samples_with_sex, 'instrument_platform':instrument_platform, 'paired_end_samples':paired_end_samples, 'single_end_samples':single_end_samples, 'library_strategy':library_strategy, 'tissue_biosamples':tissue_biosamples}
-
+    breed_samples = len(df[['sample_accession','breed']].drop_duplicates()['breed'].dropna())
+    #tissue_ena = len(df[df['tissue_type_ENA']!='NaN'])
+    general_stats = {'samples_number': samples_number, 'projects_number':projects_number, 'samples_with_sex':samples_with_sex, 'samples_with_breed': breed_samples, 'instrument_platform':instrument_platform, 'paired_end_samples':paired_end_samples, 'single_end_samples':single_end_samples, 'library_strategy':library_strategy, 'tissue_biosamples':tissue_biosamples}
+    general_stats
     df['base_count']=df['base_count'].fillna(0)
 
     df['depth'] = df['base_count'].astype(int).div(int(genome_sizes[str(animal_taxon)])).round(2)
@@ -51,7 +59,9 @@ def get_stats(animal_taxon, path_to_folder):
     samples_number_w
     projects_number_w = len(deep_df['study_accession'].unique().tolist())
     projects_number_w
-    breeds_w = len(deep_df['breed'].dropna())
+    breeds_w = len(deep_df[['sample_accession','breed']].drop_duplicates()['breed'].dropna())
+    tissue_w = len(deep_df[['sample_accession','tissue_biosamples']].drop_duplicates()['tissue_biosamples'].dropna())
+
     breeds_w
     median_depth = deep_df['depth'].median()
     median_depth
@@ -64,7 +74,7 @@ def get_stats(animal_taxon, path_to_folder):
     max_depth = deep_df['depth'].max()
     max_depth
 
-    wgs_illumina_stats = {'samples_number' : samples_number_w, 'projects_number': projects_number_w, 'breeds':breeds_w, 'median_depth':median_depth, 'mean_depth':mean_depth, 'depth_sd':depth_sd, 'min_depth': min_depth, 'max_depth':max_depth }
+    wgs_illumina_stats = {'samples_number' : samples_number_w, 'projects_number': projects_number_w, 'breeds':breeds_w, 'tissue': tissue_w,'median_depth':median_depth, 'mean_depth':mean_depth, 'depth_sd':depth_sd, 'min_depth': min_depth, 'max_depth':max_depth }
     general_stats
     wgs_illumina_stats
 
@@ -80,7 +90,6 @@ def get_stats(animal_taxon, path_to_folder):
     breed_stats = df['breed'].value_counts().to_dict()
 
     breed_stats_df = pd.DataFrame.from_records(breed_stats, index =[animal_taxon]).transpose()
-
     general_stats_df = pd.DataFrame.from_records(general_stats, index =[animal_taxon]).transpose()
     wgs_illumina_stats_df = pd.DataFrame.from_records(wgs_illumina_stats, index =[animal_taxon]).transpose()
 
@@ -103,7 +112,7 @@ def get_stats(animal_taxon, path_to_folder):
         stat.to_csv(df_path)
 
         #df.to_csv(os.path.join(path, str(animal_taxon)+'_database.csv'))
-
+    return()
 '''
 multiple_samples = df['sample_accession'].value_counts()
 multiple_samples
