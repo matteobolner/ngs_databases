@@ -6,16 +6,15 @@ import os
 import json
 import numpy as np
 
-get_stats(9822, '/home/pelmo/db_final/9822_data/')
-get_stats(9984, '/home/pelmo/db_final/9984_data/')
-get_stats(9913, '/home/pelmo/db_final/9913_data/')
-
+#get_stats(9823, '/home/pelmo/data_and_pipelines/ena_databases/data/updated_databases/9823_data')
+#get_stats(9986, '/home/pelmo/data_and_pipelines/ena_databases/data/updated_databases/9986_data')
+#get_stats(9913, '/home/pelmo/data_and_pipelines/ena_databases/data/updated_databases/9913_data')
 
 
 def get_stats(animal_taxon, path_to_folder):
-    #animal_taxon = 9822
-    genome_sizes = {'9822':'2501912388', '9984':'2737490501', '9913':'2715853792'}
-    #path_to_folder = '/home/pelmo/db_final/9822_data/'
+    animal_taxon = 9986
+    genome_sizes = {'9823':'2501912388', '9986':'2737490501', '9913':'2715853792'}
+    path_to_folder = '/home/pelmo/data_and_pipelines/ena_databases/data/updated_databases/9986_data'
     path_to_db = os.path.join(path_to_folder, str(animal_taxon)+'_database.csv')
     path_to_db
     df = pd.read_csv(path_to_db)
@@ -35,7 +34,7 @@ def get_stats(animal_taxon, path_to_folder):
     paired_end_samples
     single_end_samples = end_type_samples.value_counts()['SINGLE']
     single_end_samples
-    library_strategy = len(df['library_strategy'].dropna())
+    library_strategy = len(df[['sample_accession','library_strategy']].drop_duplicates()['library_strategy'].dropna())
     library_strategy
     tissue_biosamples = len(df[['sample_accession','tissue_biosamples']].drop_duplicates()['tissue_biosamples'].dropna())
     tissue_biosamples
@@ -55,6 +54,8 @@ def get_stats(animal_taxon, path_to_folder):
 
     deep_df = deep_df[deep_df['instrument_platform']=='ILLUMINA']
     deep_df = deep_df[deep_df['library_source']=='GENOMIC']
+    deep_df
+
     samples_number_w = len(deep_df['sample_accession'].unique().tolist())
     samples_number_w
     projects_number_w = len(deep_df['study_accession'].unique().tolist())
@@ -113,59 +114,9 @@ def get_stats(animal_taxon, path_to_folder):
 
         #df.to_csv(os.path.join(path, str(animal_taxon)+'_database.csv'))
     return()
-'''
-multiple_samples = df['sample_accession'].value_counts()
-multiple_samples
-multiple_samples = df[df['sample_accession'].isin(multiple_samples.index[multiple_samples.gt(1)])][['study_accession','sample_accession']]
-multiple_samples
-multiple_samples['count'] = multiple_samples.groupby(['sample_accession'])['study_accession'].transform('count')
-multiple_samples
-multiple_samples = multiple_samples.drop_duplicates().sort_values(by= 'count', ascending=False).reset_index(drop=True)
-multiple_samples
 
 
-
-multiple_runs = df['run_accession'].value_counts()
-multiple_runs
-multiple_runs = multiple_runs[multiple_runs.gt(1)]
-multiple_runs
-
-multiple_samples = df['sample_accession'].value_counts()
-multiple_samples
-multiple_samples = df[df['sample_accession'].isin(multiple_samples.index[multiple_samples.gt(1)])][['study_accession','sample_accession']]
-multiple_samples
-multiple_samples['count'] = multiple_samples.groupby(['sample_accession'])['study_accession'].transform('count')
-multiple_samples
-multiple_samples = multiple_samples.drop_duplicates().sort_values(by= 'count', ascending=False).reset_index(drop=True)
-
-multiple_samples
-subspecies = df['scientific_name'].value_counts()
-
-#sample_plot = sns.barplot(data = multiple_samples, x = 'sample_accession', y = 'count', palette = 'muted')
-#plt.xticks(rotation=90)
-
-#plt.show()
-
-grouped_df = df.groupby(df.library_source)
-library_sources = [name for name,unused_df in grouped_df]
-for source in library_sources:
-    grouped_df.get_group(source).to_csv(os.path.join(path, str(animal_taxon) + "_" + str(source) + "_database.csv"))
-    pd.value_counts(grouped_df.get_group(source)['library_strategy']).to_csv(os.path.join(path,  str(animal_taxon) + "_" + str(source) + "_library_strategies.csv"))
-
-df.to_csv(os.path.join(path, str(animal_taxon)+'_database.csv'))
-#multiple_runs.to_csv(os.path.join(path, str(animal_taxon) + '_multiple_runs.csv'))
-multiple_samples.to_csv(os.path.join(path, str(animal_taxon) + '_multiple_samples.csv'))
-subspecies.to_csv(os.path.join(path, str(animal_taxon) + '_subspecies.csv'))
-
-#plot the library information
-
-sns.countplot(x = df['library_strategy'], palette= 'muted')
-plt.xticks(rotation=90)
-plt.tight_layout()
-plt.savefig(os.path.join(path, str(animal_taxon)+'_library_strategy.png'))
-
-sns.countplot(x = df['library_source'], palette= 'muted')
-plt.xticks(rotation=90)
-plt.tight_layout()
-plt.savefig(os.path.join(path, str(animal_taxon)+'_library_source.png'))
-'''
+if __name__ == "__main__":
+    animal_taxon = sys.argv[1]
+    directory_path = sys.argv[2]
+    (get_stats(animal_taxon), directory_path)

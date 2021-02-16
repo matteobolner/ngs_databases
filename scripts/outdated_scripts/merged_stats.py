@@ -37,7 +37,7 @@ def plot_stats(stat, path_to_folders):
     for axes in normalized_stats_plot.axes.flat:
         _ = axes.set_xticklabels(axes.get_xticklabels(), rotation=70)
     sns.set(rc={'figure.figsize':(15,10)})
-    plt.savefig(os.path.join(path_to_folders, stat +'.jpg'), bbox_inches = "tight")
+    plt.savefig(os.path.join(path_to_folders, stat +'.jpg'), bbox_inches = "tight",dpi = 300)
 
     return(normalized_stats_plot)
 
