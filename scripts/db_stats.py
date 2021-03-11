@@ -6,15 +6,15 @@ import os
 import json
 import numpy as np
 
-#get_stats(9823, '/home/pelmo/data_and_pipelines/ena_databases/data/updated_databases/9823_data')
-#get_stats(9986, '/home/pelmo/data_and_pipelines/ena_databases/data/updated_databases/9986_data')
-#get_stats(9913, '/home/pelmo/data_and_pipelines/ena_databases/data/updated_databases/9913_data')
+get_stats(9823, '/home/pelmo/data_and_pipelines/ena_databases/data/updated_databases/9823_data')
+get_stats(9986, '/home/pelmo/data_and_pipelines/ena_databases/data/updated_databases/9986_data')
+get_stats(9913, '/home/pelmo/data_and_pipelines/ena_databases/data/updated_databases/9913_data')
 
 
 def get_stats(animal_taxon, path_to_folder):
-    animal_taxon = 9986
+    #animal_taxon = 9986
     genome_sizes = {'9823':'2501912388', '9986':'2737490501', '9913':'2715853792'}
-    path_to_folder = '/home/pelmo/data_and_pipelines/ena_databases/data/updated_databases/9986_data'
+    #path_to_folder = '/home/pelmo/data_and_pipelines/ena_databases/data/updated_databases/9986_data'
     path_to_db = os.path.join(path_to_folder, str(animal_taxon)+'_database.csv')
     path_to_db
     df = pd.read_csv(path_to_db)
@@ -52,9 +52,9 @@ def get_stats(animal_taxon, path_to_folder):
 
     #select only wgs, illumina with depth >=5
 
+    deep_df = deep_df[deep_df['library_strategy']=='WGS']
     deep_df = deep_df[deep_df['instrument_platform']=='ILLUMINA']
-    deep_df = deep_df[deep_df['library_source']=='GENOMIC']
-    deep_df
+    deep_df = deep_df[deep_df['library_layout']=='PAIRED']
 
     samples_number_w = len(deep_df['sample_accession'].unique().tolist())
     samples_number_w
@@ -62,7 +62,7 @@ def get_stats(animal_taxon, path_to_folder):
     projects_number_w
     breeds_w = len(deep_df[['sample_accession','breed']].drop_duplicates()['breed'].dropna())
     tissue_w = len(deep_df[['sample_accession','tissue_biosamples']].drop_duplicates()['tissue_biosamples'].dropna())
-
+    sex_w = len(deep_df[['sample_accession','sex']].drop_duplicates()['sex'].dropna())
     breeds_w
     median_depth = deep_df['depth'].median()
     median_depth
@@ -75,7 +75,7 @@ def get_stats(animal_taxon, path_to_folder):
     max_depth = deep_df['depth'].max()
     max_depth
 
-    wgs_illumina_stats = {'samples_number' : samples_number_w, 'projects_number': projects_number_w, 'breeds':breeds_w, 'tissue': tissue_w,'median_depth':median_depth, 'mean_depth':mean_depth, 'depth_sd':depth_sd, 'min_depth': min_depth, 'max_depth':max_depth }
+    wgs_illumina_stats = {'samples_number' : samples_number_w, 'projects_number': projects_number_w, 'breeds':breeds_w, 'sex': sex_w, 'tissue': tissue_w,'median_depth':median_depth, 'mean_depth':mean_depth, 'depth_sd':depth_sd, 'min_depth': min_depth, 'max_depth':max_depth }
     general_stats
     wgs_illumina_stats
 
@@ -112,7 +112,7 @@ def get_stats(animal_taxon, path_to_folder):
         df_path = os.path.join(stats_path, name)
         stat.to_csv(df_path)
 
-        #df.to_csv(os.path.join(path, str(animal_taxon)+'_database.csv'))
+    deep_df.to_csv(os.path.join(stats_path, str(animal_taxon)+'_hq_database.csv'))
     return()
 
 

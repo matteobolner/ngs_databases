@@ -6,15 +6,15 @@ import os
 import json
 import numpy as np
 
-genome_sizes = {'9822':'2501912388', '9984':'2737490501', '9913':'2715853792'}
+genome_sizes = {'9823':'2501912388', '9986':'2737490501', '9913':'2715853792'}
 stats = ['general_stats', 'wgs_illumina_stats', 'library_source', 'library_selection', 'library_strategy']
 
 for stat in stats:
     merge_stats(stat)
 
 def merge_stats(stat):
-    path_to_folders = '/home/pelmo/db_final/'
-    taxa = ['9822', '9913', '9984']
+    path_to_folders = '/home/pelmo/data_and_pipelines/ena_databases/data/updated_databases'
+    taxa = ['9823', '9913', '9986']
     names = ['Pig', 'Cattle', 'Rabbit']
     filenames = []
     for taxon in taxa:
@@ -33,7 +33,8 @@ def plot_stats(stat, path_to_folders):
     normalized_stats.columns = [library, 'Species','Percentage']
     ##Discard all values lower than 1% for plot readability
     normalized_stats = normalized_stats[normalized_stats['Percentage']>=1]
-    normalized_stats_plot = sns.catplot(data=normalized_stats, kind = 'bar', x=stat, y='Percentage', hue='Species', height=4, aspect=10/8)
+    print(normalized_stats)
+    normalized_stats_plot = sns.catplot(data=normalized_stats, kind = 'bar', x=stat, y='Percentage', hue='Species', height=4, aspect=10/8, hue_order = ['Pig','Cattle','Rabbit'], palette = ["C0", "C1", "C2"] )
     for axes in normalized_stats_plot.axes.flat:
         _ = axes.set_xticklabels(axes.get_xticklabels(), rotation=70)
     sns.set(rc={'figure.figsize':(15,10)})
@@ -44,4 +45,4 @@ def plot_stats(stat, path_to_folders):
 
 
 for library in ['library_source', 'library_selection', 'library_strategy']:
-    plot_stats(library, '/home/pelmo/db_final/')
+    plot_stats(library, '/home/pelmo/data_and_pipelines/ena_databases/data/updated_databases')
