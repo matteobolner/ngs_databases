@@ -12,7 +12,7 @@ import numpy as np
 
 def get_data(animal_taxon):
     #animal_taxon = 9822
-    genome_sizes = {'9822':'2501912388', '9984':'2737490501', '9913':'2715853792'}
+    genome_sizes = {'9822':'2501912388', '9984':'2737490501', '9913':'2715853792', '7460':'225,250,884'}
     headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
     }

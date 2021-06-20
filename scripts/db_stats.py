@@ -6,14 +6,14 @@ import os
 import json
 import numpy as np
 
-get_stats(9823, '/home/pelmo/data_and_pipelines/ena_databases/data/updated_databases/9823_data')
-get_stats(9986, '/home/pelmo/data_and_pipelines/ena_databases/data/updated_databases/9986_data')
-get_stats(9913, '/home/pelmo/data_and_pipelines/ena_databases/data/updated_databases/9913_data')
+#get_stats(9823, '/home/pelmo/data_and_pipelines/ena_databases/data/updated_databases/9823_data')
+#get_stats(9986, '/home/pelmo/data_and_pipelines/ena_databases/data/updated_databases/9986_data')
+#get_stats(9913, '/home/pelmo/data_and_pipelines/ena_databases/data/updated_databases/9913_data')
 
 
 def get_stats(animal_taxon, path_to_folder):
     #animal_taxon = 9986
-    genome_sizes = {'9823':'2501912388', '9986':'2737490501', '9913':'2715853792'}
+    genome_sizes = {'9823':'2501912388', '9986':'2737490501', '9913':'2715853792', '7460':'225,250,884'}
     #path_to_folder = '/home/pelmo/data_and_pipelines/ena_databases/data/updated_databases/9986_data'
     path_to_db = os.path.join(path_to_folder, str(animal_taxon)+'_database.csv')
     path_to_db
@@ -119,4 +119,4 @@ def get_stats(animal_taxon, path_to_folder):
 if __name__ == "__main__":
     animal_taxon = sys.argv[1]
     directory_path = sys.argv[2]
-    (get_stats(animal_taxon), directory_path)
+    get_stats(animal_taxon, directory_path)
